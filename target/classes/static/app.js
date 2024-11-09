@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Formulário de cadastro de usuário
     const formUsuario = document.getElementById('formUsuario');
+    const mensagemUsuario = document.getElementById('mensagemUsuario');
+
     formUsuario.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -9,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Verificar se a senha não está vazia
         if (!senhaUsuario || senhaUsuario.trim() === '') {
-            alert('Por favor, insira uma senha.');
+            mensagemUsuario.textContent = 'Por favor, insira uma senha.';
+            mensagemUsuario.classList.add('error');
             return;
         }
 
@@ -21,26 +24,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-            alert('Usuário cadastrado com sucesso!');
+            const usuario = await response.json();
+            mensagemUsuario.textContent = `Usuário cadastrado com sucesso! O seu ID de usuário é ${usuario.idUsuario}.`;
+            mensagemUsuario.classList.remove('error');
             formUsuario.reset();
         } else {
-            alert('Erro ao cadastrar usuário');
+            mensagemUsuario.textContent = 'Erro ao cadastrar usuário';
+            mensagemUsuario.classList.add('error');
         }
     });
 
     // Formulário de cadastro de senha
     const formSenha = document.getElementById('formSenha');
+    const mensagemSenha = document.getElementById('mensagemSenha');
+
     formSenha.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const idUsuario = document.getElementById('idUsuario').value;
         const descricaoSenha = document.getElementById('descricaoSenha').value;
         const senha = document.getElementById('senha').value;
-        const nome = document.getElementById('nome').value
+        const nome = document.getElementById('nome').value;
 
         // Verificar se a senha não está vazia
         if (!senha || senha.trim() === '') {
-            alert('Por favor, insira uma senha.');
+            mensagemSenha.textContent = 'Por favor, insira uma senha.';
+            mensagemSenha.classList.add('error');
             return;
         }
 
@@ -59,10 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-            alert('Senha cadastrada com sucesso!');
+            mensagemSenha.textContent = 'Senha cadastrada com sucesso!';
+            mensagemSenha.classList.remove('error');
             formSenha.reset();
         } else {
-            alert('Erro ao cadastrar senha');
+            mensagemSenha.textContent = 'Erro ao cadastrar senha';
+            mensagemSenha.classList.add('error');
         }
     });
 
@@ -73,30 +84,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const idUsuarioListar = document.getElementById('idUsuarioListar').value;
 
-        // Buscar senhas do usuário
-        const response = await fetch(`http://localhost:8080/senhas/${idUsuarioListar}`);
+        try {
+            // Buscar informações do usuário
+            const responseUsuario = await fetch(`http://localhost:8080/usuarios/${idUsuarioListar}`);
+            if (!responseUsuario.ok) throw new Error('Erro ao buscar informações do usuário');
+            const usuario = await responseUsuario.json();
 
-        if (response.ok) {
-            const senhas = await response.json();
-            listarSenhas(senhas);
-        } else {
-            alert('Erro ao listar senhas');
+            // Buscar senhas do usuário
+            const responseSenhas = await fetch(`http://localhost:8080/senhas/${idUsuarioListar}`);
+            if (!responseSenhas.ok) throw new Error('Erro ao buscar senhas do usuário');
+            const senhas = await responseSenhas.json();
+
+            listarSenhas(usuario.nome, senhas);
+        } catch (error) {
+            alert('Voce Não Criou esse Usuário ' + error.message);
         }
     });
 
     // Função para listar as senhas na interface
-    function listarSenhas(senhas) {
+    function listarSenhas(nomeUsuario, senhas) {
         const listaSenhas = document.getElementById('listaSenhas');
+        const nomeDoUsuario = document.getElementById('nomeDoUsuario');
         listaSenhas.innerHTML = '';
+        nomeDoUsuario.textContent = `Nome do Usuário: ${nomeUsuario}`;
 
         if (senhas.length === 0) {
             listaSenhas.innerHTML = '<li>Nenhuma senha encontrada para este usuário.</li>';
         } else {
             senhas.forEach(senha => {
                 const li = document.createElement('li');
-                li.textContent = `Descrição: ${senha.descricao}, Senha: ${senha.hashSenha}`;
+                li.innerHTML = `
+                <div><strong>Nome:</strong> ${senha.nome}</div>
+                <div><strong>Descrição:</strong> ${senha.descricao}</div>
+                <div><strong>Senha:</strong> ${senha.hashSenha}</div>
+            `;
                 listaSenhas.appendChild(li);
             });
         }
     }
+
+
 });
