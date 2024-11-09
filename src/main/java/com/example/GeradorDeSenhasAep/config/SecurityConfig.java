@@ -18,5 +18,4 @@ public class SecurityConfig {
                 .anyRequest().permitAll(); // Permite acesso a todas as rotas sem autenticação
         return http.build();
     }
-
 }

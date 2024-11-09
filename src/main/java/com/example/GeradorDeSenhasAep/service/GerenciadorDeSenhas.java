@@ -34,7 +34,11 @@ public class GerenciadorDeSenhas {
     }
 
     // Método para buscar um usuário pelo ID
-    public Usuario buscarUsuarioPorId(int idUsuario) {
+    public Usuario buscarUsuarioPorId(Integer idUsuario) {
+        if (idUsuario == null) {
+            throw new IllegalArgumentException("O ID do usuário não pode ser nulo.");
+        }
+
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         return usuario.orElse(null); // Retorna o usuário ou null se não encontrado
     }

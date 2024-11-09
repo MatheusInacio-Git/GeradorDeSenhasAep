@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Senhas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin: 10px 0 5px; }
+        input, button { padding: 8px; margin: 5px 0; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+<h1>Gerenciador de Senhas</h1>
+
+<!-- Formulário para adicionar usuários -->
+<h2>Cadastrar Novo Usuário</h2>
+<form id="formUsuario">
+    <label for="nomeUsuario">Nome:</label>
+    <input type="text" id="nomeUsuario" required>
+
+    <label for="senhaUsuario">Senha:</label>
+    <input type="password" id="senhaUsuario" required>
+
+    <button type="submit">Cadastrar Usuário</button>
+</form>
+
+<!-- Formulário para adicionar senhas -->
+<h2>Adicionar Senha</h2>
+<form id="formSenha">
+    <label for="idUsuario">ID do Usuário:</label>
+    <input type="number" id="idUsuario" required>
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" required>
+
+    <label for="descricaoSenha">Descrição da Senha:</label>
+    <input type="text" id="descricaoSenha" required>
+
+    <label for="senha">Senha (em hash):</label>
+    <input type="password" id="senha" required>
+
+    <button type="submit">Adicionar Senha</button>
+</form>
+
+<!-- Formulário para listar as senhas de um usuário -->
+<h2>Listar Senhas de Usuário</h2>
+<form id="formListarSenhas">
+    <label for="idUsuarioListar">ID do Usuário:</label>
+    <input type="number" id="idUsuarioListar" required>
+    <button type="submit">Listar Senhas</button>
+</form>
+
+<h3>Senhas do Usuário</h3>
+<ul id="listaSenhas"></ul>
+
+<script src="app.js"></script>
+</body>
+</html>
